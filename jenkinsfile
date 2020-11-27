@@ -5,10 +5,8 @@ pipeline {
         dockerImage = '' 
     }
     agent {
-		node {
-			label 'docker_dev'
-		}
-	}
+        label 'docker_dev'
+    }
     stages {
         stage('Cloning our Git') { 
             steps { 
