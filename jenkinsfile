@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Cloning our Git') { 
             steps { 
-                git 'https://github.com/watri/news-demo-starter-files.git' 
+                git branch: 'dev', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
         } 
         stage('Building our image') { 
