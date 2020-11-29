@@ -40,14 +40,6 @@ pipeline {
                 } 
             }
         } 
-        stage('Cleaning up') {
-            agent {
-                label "docker_dev"
-            } 
-            steps { 
-                sh "docker rmi $registry:$BUILD_NUMBER" 
-            }
-        }
 		stage('Run New Container') {
             agent {
                 label "docker_dev"
