@@ -4,23 +4,30 @@ pipeline {
         registryCredential = 'dockerhub' 
         dockerImage = '' 
     }
-    agent {
-        label 'docker_prd'
-    }
+    agent none
     stages {
         stage('Cloning our Git') { 
+            agent {
+                label "docker_dev"
+            }
             steps { 
-                git branch: 'master', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
+                git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
         } 
-        stage('Building our image') { 
+        stage('Building our image') {
+            agent {
+                label "docker_dev"
+            } 
             steps { 
                 script { 
                     dockerImage = docker.build registry + ":$BUILD_NUMBER" 
                 }
             } 
         }
-        stage('Deploy our image') { 
+        stage('Deploy our image') {
+            agent {
+                label "docker_dev"
+            } 
             steps { 
                 script { 
                     docker.withRegistry( '', registryCredential ) { 
@@ -29,22 +36,49 @@ pipeline {
                 } 
             }
         } 
-        stage('Cleaning up') { 
+        stage('Cleaning up') {
+            agent {
+                label "docker_dev"
+            } 
             steps { 
                 sh "docker rmi $registry:$BUILD_NUMBER" 
             }
         }
-		stage('Remove old container') { 
+		stage('Run new container') {
+            agent {
+                label "docker_dev"
+            } 
             steps { 
-                sh "docker stop website2" 
-				sh "docker rm website2"
-				}
-        }
-		stage('Run new container') { 
-            steps { 
-                sh "docker container create --name website2 -p 3000:3000 watri/website:$BUILD_NUMBER"
-				sh "docker start website2"
-				}				
+                script{
+                     try {
+                            sh "docker stop koala" 
+				            sh "docker rm koala"  
+                        } catch (e) {
+                            echo: 'caugth error : $err'
+                        }
+                sh "docker container create --name koala -p 3000:3000 watri/website:$BUILD_NUMBER"
+				sh "docker start koala"
+				    }
+                }				
             }
+        stage('Deploy on Production?') {
+            agent{
+                label="docker_prd"
+            }
+            steps { 
+                input 'Deploy on Production?'
+                milestone (1)
+                    script{
+                        try {
+                            sh "docker stop koala" 
+				            sh "docker rm koala"  
+                        } catch (e) {
+                            echo: 'caugth error : $err'
+                        }
+                        sh "docker container create --name koala -p 3000:3000 watri/website:$BUILD_NUMBER"
+                        sh "docker start koala"
+                    }
+               }
+            }     
         }
     }
