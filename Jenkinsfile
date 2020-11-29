@@ -63,7 +63,7 @@ pipeline {
             }
         stage('Deploy on Production?') {
             agent{
-                label="docker_prd"
+                label "docker_prd"
             }
             steps { 
                 input 'Deploy on Production?'
