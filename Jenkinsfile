@@ -34,7 +34,7 @@ pipeline {
             steps { 
                 script { 
                     docker.withRegistry( 'https://registry.docker.com', registryCredential ) { 
-                        app.push("$BUILD_NUMBER")
+                        app.push("${env.BUILD_NUMBER}")
                         app.push("latest") 
                     }
                 } 
