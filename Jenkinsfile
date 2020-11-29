@@ -6,7 +6,7 @@ pipeline {
     }
     agent none
     stages {
-        stage('Cloning our Git') { 
+        stage('Cloning Git Repository') { 
             agent {
                 label "docker_dev"
             }
@@ -14,24 +14,28 @@ pipeline {
                 git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
         } 
-        stage('Building our image') {
+        stage('Building image') {
             agent {
                 label "docker_dev"
             } 
             steps { 
                 script { 
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    app = app = docker.build registry 
+                    app.inside {
+                        sh 'echo $(curl 54.179.131.146:3000)'
+                    }
                 }
             } 
         }
-        stage('Deploy our image') {
+        stage('Deploy image') {
             agent {
                 label "docker_dev"
             } 
             steps { 
                 script { 
                     docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest") 
                     }
                 } 
             }
@@ -41,10 +45,10 @@ pipeline {
                 label "docker_dev"
             } 
             steps { 
-                sh "docker rmi $registry:$BUILD_NUMBER" 
+                sh "docker rmi $registry:${env.BUILD_NUMBER}" 
             }
         }
-		stage('Run new container') {
+		stage('Run New Container') {
             agent {
                 label "docker_dev"
             } 
@@ -56,12 +60,12 @@ pipeline {
                         } catch (e) {
                             echo: 'caugth error : $err'
                         }
-                sh "docker container create --name koala -p 3000:3000 watri/website:$BUILD_NUMBER"
+                sh "docker container create --name koala -p 3000:3000 watri/website:${env.BUILD_NUMBER}"
 				sh "docker start koala"
 				    }
                 }				
             }
-        stage('Deploy on Production?') {
+        stage('Deploy on Production') {
             agent{
                 label "docker_prd"
             }
@@ -75,7 +79,7 @@ pipeline {
                         } catch (e) {
                             echo: 'caugth error : $err'
                         }
-                        sh "docker container create --name koala -p 3000:3000 watri/website:$BUILD_NUMBER"
+                        sh "docker container create --name koala -p 3000:3000 watri/website:latest"
                         sh "docker start koala"
                     }
                }
