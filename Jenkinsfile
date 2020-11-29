@@ -20,7 +20,7 @@ pipeline {
             } 
             steps { 
                 script { 
-                    app = app = docker.build(registry) 
+                    app = docker.build(registry) 
                     app.inside {
                         sh 'echo $(curl 54.179.131.146:3000)'
                     }
@@ -40,6 +40,14 @@ pipeline {
                 } 
             }
         } 
+        stage('Cleaning up') {
+            agent {
+                label "docker_dev"
+            } 
+            steps { 
+                sh "docker rmi $registry:${env.BUILD_NUMBER}" 
+            }
+        }
 		stage('Run New Container') {
             agent {
                 label "docker_dev"
@@ -52,7 +60,7 @@ pipeline {
                         } catch (e) {
                             echo: 'caugth error : $err'
                         }
-                sh "docker container create --name koala -p 3000:3000 watri/website:$BUILD_NUMBER"
+                sh "docker container create --name koala -p 3000:3000 watri/website:${env.BUILD_NUMBER}"
 				sh "docker start koala"
 				    }
                 }				
