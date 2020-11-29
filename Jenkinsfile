@@ -33,8 +33,8 @@ pipeline {
             } 
             steps { 
                 script { 
-                    docker.withRegistry( '', registryCredential ) { 
-                        app.push("${env.BUILD_NUMBER}")
+                    docker.withRegistry( 'https://registry.docker.com', registryCredential ) { 
+                        app.push("$BUILD_NUMBER")
                         app.push("latest") 
                     }
                 } 
@@ -45,7 +45,7 @@ pipeline {
                 label "docker_dev"
             } 
             steps { 
-                sh "docker rmi $registry:${env.BUILD_NUMBER}" 
+                sh "docker rmi $registry:$BUILD_NUMBER" 
             }
         }
 		stage('Run New Container') {
@@ -60,7 +60,7 @@ pipeline {
                         } catch (e) {
                             echo: 'caugth error : $err'
                         }
-                sh "docker container create --name koala -p 3000:3000 watri/website:${env.BUILD_NUMBER}"
+                sh "docker container create --name koala -p 3000:3000 watri/website:$BUILD_NUMBER"
 				sh "docker start koala"
 				    }
                 }				
