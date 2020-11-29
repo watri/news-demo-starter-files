@@ -76,7 +76,7 @@ pipeline {
                         } catch (e) {
                             echo: 'caugth error : $err'
                         }
-                        sh "docker container create --name koala -p 3000:3000 watri/website:latest"
+                        sh "docker container create --name koala -p 3000:3000 watri/website:${env.BUILD_NUMBER}"
                         sh "docker start koala"
                     }
                }
