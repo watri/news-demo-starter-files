@@ -20,7 +20,7 @@ pipeline {
             } 
             steps { 
                 script { 
-                    app = app = docker.build registry 
+                    app = app = docker.build(registry) 
                     app.inside {
                         sh 'echo $(curl 54.179.131.146:3000)'
                     }
