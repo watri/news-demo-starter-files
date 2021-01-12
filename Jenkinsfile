@@ -1,7 +1,7 @@
 pipeline { 
     environment { 
         registry = "watri/website" 
-        registryCredential = 'dockerhub' 
+        registryCredential = 'docker_hub' 
         dockerImage = '' 
     }
     agent none
