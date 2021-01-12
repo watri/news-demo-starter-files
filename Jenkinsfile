@@ -1,5 +1,10 @@
-pipeline { 
-    environment { 
+pipeline {
+    agent any
+    environment {
+        PROJECT_ID = 'watri-project'
+        CLUSTER_NAME = 'watri-cluster'
+        LOCATION = 'us-central1-c'
+        CREDENTIALS_ID = 'watri-cluster' 
         registry = "watri/website" 
         registryCredential = 'docker_hub' 
         dockerImage = '' 
@@ -7,17 +12,11 @@ pipeline {
     agent none
     stages {
         stage('Cloning Git Repository') { 
-            agent {
-                label "docker_dev"
-            }
             steps { 
                 git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
         } 
-        stage('Building image') {
-            agent {
-                label "docker_dev"
-            } 
+        stage('Building image') { 
             steps { 
                 script { 
                     app = docker.build(registry) 
@@ -25,9 +24,6 @@ pipeline {
             } 
         }
         stage('Deploy image') {
-            agent {
-                label "docker_dev"
-            } 
             steps { 
                 script { 
                     docker.withRegistry( '', registryCredential ) { 
@@ -37,49 +33,22 @@ pipeline {
                 } 
             }
         } 
-        stage('Cleaning up') {
-            agent {
-                label "docker_dev"
-            } 
+        stage('Cleaning up') { 
             steps { 
                 sh "docker rmi $registry:${env.BUILD_NUMBER}" 
             }
         }
-		stage('Run New Container') {
-            agent {
-                label "docker_dev"
-            } 
-            steps { 
-                script{
-                     try {
-                            sh "docker stop koala" 
-				            sh "docker rm koala"  
-                        } catch (e) {
-                            echo: 'caugth error : $err'
-                        }
-                sh "docker container create --name koala -p 3000:3000 watri/website:${env.BUILD_NUMBER}"
-				sh "docker start koala"
-				    }
-                }				
+        stage('Deploy to GKE') {
+            steps{
+                step([
+                $class: 'KubernetesEngineBuilder',
+                projectId: env.PROJECT_ID,
+                clusterName: env.CLUSTER_NAME,
+                location: env.LOCATION,
+                manifestPattern: 'K8s/nginx-deployment.yaml',
+                credentialsId: env.CREDENTIALS_ID,
+                verifyDeployments: true])
             }
-        stage('Deploy on Production') {
-            agent{
-                label "docker_prd"
-            }
-            steps { 
-                input 'Deploy on Production?'
-                milestone (1)
-                    script{
-                        try {
-                            sh "docker stop koala" 
-				            sh "docker rm koala"  
-                        } catch (e) {
-                            echo: 'caugth error : $err'
-                        }
-                        sh "docker container create --name koala -p 3000:3000 watri/website:${env.BUILD_NUMBER}"
-                        sh "docker start koala"
-                    }
-               }
-            }     
         }
     }
+}
