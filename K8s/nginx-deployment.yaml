@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: website
-  namespace: website
   labels:
     app: website
 spec:
@@ -14,6 +13,7 @@ spec:
     metadata:
       labels:
         app: website
+        namespace: website
     spec:
       containers:
       - name: website
