@@ -4,7 +4,7 @@ pipeline {
         PROJECT_ID = 'watri-project'
         CLUSTER_NAME = 'watri-cluster'
         LOCATION = 'us-central1-c'
-        CREDENTIALS_ID = 'watri-cluster' 
+        CREDENTIALS_ID = 'Watri-Project' 
         registry = "watri/website" 
         registryCredential = 'docker_hub' 
         dockerImage = '' 
