@@ -33,7 +33,6 @@ pipeline {
             }
         }
         stage('DeployToProduction') {
-            }
             steps {
                 input 'Deploy to Production?'
                  milestone(1)
