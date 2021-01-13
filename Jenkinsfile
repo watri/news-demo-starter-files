@@ -32,6 +32,14 @@ pipeline {
                 } 
             }
         }
+        stage('Check Node Kube') {
+            steps { 
+                script { 
+                    sh "kubectl get nodes" 
+                    }
+                } 
+            }
+        }
         stage('DeployToProduction') {
             steps {
                 input 'Deploy to Production?'
