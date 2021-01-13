@@ -10,12 +10,28 @@ pipeline {
         dockerImage = '' 
     }
     stages {
-        stage('Cloning Git Repository') { 
+        stage('Cloning Git Repository branch prod') { 
             when {
                 branch 'prod'
             }
             steps { 
                 git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
+            }
+        }
+        stage('Cloning Git Repository branch dev') { 
+            when {
+                branch 'dev'
+            }
+            steps { 
+                git branch: 'dev', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
+            }
+        }
+        stage('Cloning Git Repository branch master') { 
+            when {
+                branch 'master'
+            }
+            steps { 
+                git branch: 'master', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
         } 
         stage('Building image') { 
