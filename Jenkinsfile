@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-   //     PROJECT_ID = 'watri-project'
-   //     CLUSTER_NAME = 'watri-cluster'
-   //     LOCATION = 'us-central1-c'
+        PROJECT_ID = 'watri-project'
+        CLUSTER_NAME = 'watri-cluster'
+        LOCATION = 'us-central1-c'
         CREDENTIALS_ID = 'Watri-Project' 
         registry = "watri/website" 
         registryCredential = 'docker_hub' 
@@ -34,31 +34,20 @@ pipeline {
         }
         stage('Check Node Kube') {
             steps {
-                    sh 'kubectl get nodes' 
+                    sh 'kubectl deltet -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/nginx-deploymnet.yaml' 
             } 
-        }
-        stage('DeployToProduction') {
-            steps {
-                input 'Deploy to Production?'
-                 milestone(1)
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'nginx-deployment.yml',
-                    enableConfigSubstitution: true
-                )
-            }
         } 
-       // stage('Deploy to GKE') {
-       //     steps{
-         //       step([
-           //     $class: 'KubernetesEngineBuilder',
-             //   projectId: env.PROJECT_ID,
-              //  clusterName: env.CLUSTER_NAME,
-             //   location: env.LOCATION,
-             //   manifestPattern: 'K8s/',
-             //   credentialsId: env.CREDENTIALS_ID,
-             //   verifyDeployments: true])
-           // }
-       // }
+        stage('Deploy to GKE') {
+            steps{
+               step([
+               $class: 'KubernetesEngineBuilder',
+               projectId: env.PROJECT_ID,
+                clusterName: env.CLUSTER_NAME,
+                location: env.LOCATION,
+                manifestPattern: 'K8s/',
+                credentialsId: env.CREDENTIALS_ID,
+                verifyDeployments: true])
+            }
+        }
      }
 }

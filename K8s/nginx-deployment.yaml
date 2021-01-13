@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: website
-        image: $registry:$BUILD_NUMBER
+        image: watri/website:latest
         ports:
         - containerPort: 3000
