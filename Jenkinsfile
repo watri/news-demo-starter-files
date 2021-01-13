@@ -3,7 +3,7 @@ pipeline {
     environment {
         PROJECT_ID = "${PROJECT_ID}"
         CLUSTER_NAME = "${CLUSTER_NAME}"
-        LOCATION = "${LOCATIONE}"
+        LOCATION = "${LOCATION}"
         CREDENTIALS_ID = "${CREDENTIALS_ID}" 
         registry = "${registry}" 
         registryCredential = "${registryCredential}"  
@@ -45,8 +45,8 @@ pipeline {
         stage('Deploy to GKE') {
             steps{
                step([
-               $class: 'KubernetesEngineBuilder',
-               projectId: env.PROJECT_ID,
+                $class: 'KubernetesEngineBuilder',
+                projectId: env.PROJECT_ID,
                 clusterName: env.CLUSTER_NAME,
                 location: env.LOCATION,
                 manifestPattern: 'K8s/',
