@@ -4,7 +4,7 @@ pipeline {
    //     PROJECT_ID = 'watri-project'
    //     CLUSTER_NAME = 'watri-cluster'
    //     LOCATION = 'us-central1-c'
-   //     CREDENTIALS_ID = 'Watri-Project' 
+        CREDENTIALS_ID = 'Watri-Project' 
         registry = "watri/website" 
         registryCredential = 'docker_hub' 
         dockerImage = '' 
@@ -33,8 +33,8 @@ pipeline {
             }
         }
         stage('Check Node Kube') {
-            steps { 
-                script { 
+            steps {
+                withKubeConfig([credentialsId: env.CREDENTIALS_ID]) {
                     sh "kubectl get nodes" 
                 }
             } 
