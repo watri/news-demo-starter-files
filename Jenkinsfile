@@ -34,7 +34,7 @@ pipeline {
         }
         stage('Check Node Kube') {
             steps {
-                withKubeConfig([credentialsId: env.CREDENTIALS_ID]) {
+                withKubeConfig([credentialsId: env.CREDENTIALS_ID , serverurl: 'https://34.68.129.39']) {
                     sh "kubectl get nodes" 
                 }
             } 
