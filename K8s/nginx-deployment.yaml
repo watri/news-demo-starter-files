@@ -3,9 +3,9 @@ kind: Deployment
 metadata:
   name: website
   labels:
-    app: websitek
+    app: website
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: website
