@@ -31,23 +31,30 @@ pipeline {
                     }
                 } 
             }
+        }
+        stage('DeployToProduction') {
+            }
+            steps {
+                input 'Deploy to Production?'
+                 milestone(1)
+                kubernetesDeploy(
+                    kubeconfigId: 'kubeconfig',
+                    configs: 'nginx-deployment.yaml',
+                    enableConfigSubstitution: true
+                )
+            }
         } 
-        stage('Cleaning up') { 
-            steps { 
-                sh "docker rmi $registry:${env.BUILD_NUMBER}" 
-            }
-        }
-        stage('Deploy to GKE') {
-            steps{
-                step([
-                $class: 'KubernetesEngineBuilder',
-                projectId: env.PROJECT_ID,
-                clusterName: env.CLUSTER_NAME,
-                location: env.LOCATION,
-                manifestPattern: 'K8s/',
-                credentialsId: env.CREDENTIALS_ID,
-                verifyDeployments: true])
-            }
-        }
-    }
+       // stage('Deploy to GKE') {
+       //     steps{
+         //       step([
+           //     $class: 'KubernetesEngineBuilder',
+             //   projectId: env.PROJECT_ID,
+              //  clusterName: env.CLUSTER_NAME,
+             //   location: env.LOCATION,
+             //   manifestPattern: 'K8s/',
+             //   credentialsId: env.CREDENTIALS_ID,
+             //   verifyDeployments: true])
+           // }
+       // }
+   // }
 }
