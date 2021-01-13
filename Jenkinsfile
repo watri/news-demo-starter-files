@@ -34,7 +34,7 @@ pipeline {
         }
         stage('Check Node Kube') {
             steps {
-                    sh 'kubectl delete -f workspace/news-demo-starter-files_prod/K8s/nginx-deploymnet.yaml' 
+                    sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/nginx-deployment.yaml' 
             } 
         } 
         stage('Deploy to GKE') {
