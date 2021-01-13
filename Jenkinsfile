@@ -1,12 +1,12 @@
 pipeline {
     agent any
     environment {
-        PROJECT_ID = 'watri-project'
-        CLUSTER_NAME = 'watri-cluster'
-        LOCATION = 'us-central1-c'
-        CREDENTIALS_ID = 'Watri-Project' 
-        registry = "watri/website" 
-        registryCredential = 'docker_hub' 
+        PROJECT_ID = "${PROJECT_ID}"
+        CLUSTER_NAME = "${CLUSTER_NAME}"
+        LOCATION = "${LOCATIONE}"
+        CREDENTIALS_ID = "${CREDENTIALS_ID}" 
+        registry = "${registry}" 
+        registryCredential = "${registryCredential}"  
         dockerImage = '' 
     }
     stages {
@@ -32,7 +32,12 @@ pipeline {
                 } 
             }
         }
-        stage('Check Node Kube') {
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
+        }
+        stage('Delete Old Deployments') {
             steps {
                     sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/nginx-deployment.yaml' 
             } 
