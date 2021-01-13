@@ -58,7 +58,9 @@ pipeline {
         }
         stage('Delete Old Deployments') {
             steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/nginx-deployment.yaml' 
+                }
             } 
         } 
         stage('Deploy to GKE') {
