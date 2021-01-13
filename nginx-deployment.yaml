@@ -1,3 +1,17 @@
+kind: Service
+metadata:
+  name: website-service
+spec:
+  selector:
+    app: website
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,7 +19,7 @@ metadata:
   labels:
     app: website
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: website
@@ -17,6 +31,5 @@ spec:
       containers:
       - name: website
         image: $registry:$BUILD_NUMBER
-        imagePullPolicy: Always
         ports:
         - containerPort: 3000
