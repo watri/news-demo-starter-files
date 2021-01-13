@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Cloning Git Repository') { 
             when {
-                branch 'master'
+                branch 'prod'
             }
             steps { 
                 git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
@@ -37,7 +37,7 @@ pipeline {
         }
         stage('Remove Unused docker image') {
             steps{
-                sh "docker image prune -a"
+                sh "docker image prune -a -f"
             }
         }
         stage('Delete Old Deployments') {
