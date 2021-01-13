@@ -36,9 +36,8 @@ pipeline {
             steps { 
                 script { 
                     sh "kubectl get nodes" 
-                    }
-                } 
-            }
+                }
+            } 
         }
         stage('DeployToProduction') {
             steps {
