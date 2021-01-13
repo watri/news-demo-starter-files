@@ -11,6 +11,9 @@ pipeline {
     }
     stages {
         stage('Cloning Git Repository') { 
+            when {
+                branch 'master'
+            }
             steps { 
                 git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
