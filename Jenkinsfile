@@ -75,10 +75,25 @@ pipeline {
                 verifyDeployments: true])
             }
         }
+        stage('Push Notification') {
+            steps {
+                script{
+                    withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
+                    string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
+                    sh """
+                    curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode="HTML" -d text="<b>Project</b> : POC \
+                    <b>Branch</b>: prod \
+                    <b>Build </b> : OK \
+                    <b>Test suite</b> = Passed"
+                    """
+                    }
+                }   
+            }
+        }
      }
      post{
         always{
-            sh 'curl -ivk https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="'${PROJECT_NAME}:${BUILD_STATUS}'"'
+            sh 'curl -ivk https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="${PROJECT_NAME}:${BUILD_STATUS}"'
             //telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:-320006499)
         }
     }
