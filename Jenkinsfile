@@ -93,8 +93,8 @@ pipeline {
      }
      post{
         always{
-           telegramSend(message: 'Hello World', chatId: 320006499)
-           // sh 'curl -ivk https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="${PROJECT_NAME}:${BUILD_STATUS}"'
+            telegramSend(message: 'Hello World', chatId: -320006499)
+           // sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="${PROJECT_NAME}:${BUILD_STATUS}"'
             //telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:-320006499)
         }
     }
