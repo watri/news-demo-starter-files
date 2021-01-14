@@ -75,6 +75,13 @@ pipeline {
                 verifyDeployments: true])
             }
         }
+        steps {
+            script{
+                withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
+                string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
+                telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:${CHAT_ID})
+            }   
+        }
         // stage('Push Notification') {
         //     steps {
         //         script{
@@ -93,7 +100,7 @@ pipeline {
      }
      post{
         always{
-            telegramSend(message: 'Hello World', chatId: -320006499)
+            telegramSend(message: "Hello World", chatId: -320006499)
            // sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="${PROJECT_NAME}:${BUILD_STATUS}"'
             //telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:-320006499)
         }
