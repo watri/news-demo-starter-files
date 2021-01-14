@@ -100,18 +100,29 @@ pipeline {
         //         }   
         //     }
         // }
-     }
-     post{
-        always{
-            script{
-                    withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
-                    string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
-                    telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:${CHAT_ID})
-                    }
-           // telegramSend(message: "Hello World", chatId: -320006499)
-           // sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="${PROJECT_NAME}:${BUILD_STATUS}"'
-            //telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:-320006499)
-            }
+    }
+    post {
+        success {
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : SUCCESS"'
+        }
+        unstable {
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : UNSTABLE"'
+        }
+        failure {
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : FAILED"'
         }
     }
+    //  post{
+    //     always{
+    //         script{
+    //                 withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
+    //                 string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
+    //                 telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:${CHAT_ID})
+    //                 }
+    //        // telegramSend(message: "Hello World", chatId: -320006499)
+    //        // sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="${PROJECT_NAME}:${BUILD_STATUS}"'
+    //         //telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:-320006499)
+    //         }
+    //     }
+    // }
 }
