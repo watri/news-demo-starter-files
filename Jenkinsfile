@@ -76,4 +76,9 @@ pipeline {
             }
         }
      }
+     post{	//No matter success or failure will send information, youid is the group id sent
+        always{
+            telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:-320006499)
+        }
+    }
 }
