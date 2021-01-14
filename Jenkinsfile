@@ -75,12 +75,14 @@ pipeline {
                 verifyDeployments: true])
             }
         }
-        steps {
-            script{
-                withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
-                string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
-                telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:${CHAT_ID})
-                }   
+        stage('Push Notification') {
+            steps {
+                script{
+                    withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
+                    string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
+                    telegramSend(message:'${PROJECT_NAME}:${BUILD_STATUS}',chatId:${CHAT_ID})
+                    }
+                }
             }
         }
         // stage('Push Notification') {
