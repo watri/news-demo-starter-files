@@ -1,13 +1,9 @@
 pipeline {
     agent any
-    environment {
-        PROJECT_ID = "${PROJECT_ID}"
-        CLUSTER_NAME = "${CLUSTER_NAME}"
-        LOCATION = "${LOCATION}"
-        CREDENTIALS_ID = "${CREDENTIALS_ID}" 
+    environment { 
         registry = "${registry}" 
         registryCredential = "${registryCredential}"  
-        dockerImage = '' 
+        //dockerImage = '' 
     }
     stages {
         stage('Cloning Git Repository branch prod') { 
@@ -65,14 +61,9 @@ pipeline {
         } 
         stage('Deploy to GKE') {
             steps{
-               step([
-                $class: 'KubernetesEngineBuilder',
-                projectId: env.PROJECT_ID,
-                clusterName: env.CLUSTER_NAME,
-                location: env.LOCATION,
-                manifestPattern: 'K8s/',
-                credentialsId: env.CREDENTIALS_ID,
-                verifyDeployments: true])
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'kubectl apply -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/nginx-deployment.yaml' 
+                }            
             }
         }
     }
