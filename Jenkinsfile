@@ -76,13 +76,13 @@ pipeline {
     }
     post {
         success {
-            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : SUCCESS"'
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » dev : SUCCESS"'
         }
         unstable {
-            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : UNSTABLE"'
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » dev : UNSTABLE"'
         }
         failure {
-            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : FAILED"'
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » dev : FAILED"'
         }
     }
 }
