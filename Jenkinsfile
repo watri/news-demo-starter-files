@@ -1,50 +1,88 @@
-pipeline { 
+pipeline {
+    agent any
     environment { 
-        registry = "watri/website" 
-        registryCredential = 'dockerhub' 
-        dockerImage = '' 
-    }
-    agent {
-        label 'docker_dev'
+        registry = "${registry}" 
+        registryCredential = "${registryCredential}"  
+        //dockerImage = '' 
     }
     stages {
-        stage('Cloning our Git') { 
+        stage('Cloning Git Repository branch prod') { 
+            when {
+                branch 'prod'
+            }
+            steps { 
+                git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
+            }
+        }
+        stage('Cloning Git Repository branch dev') { 
+            when {
+                branch 'dev'
+            }
             steps { 
                 git branch: 'dev', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
+        }
+        stage('Cloning Git Repository branch master') { 
+            when {
+                branch 'master'
+            }
+            steps { 
+                git branch: 'master', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
+            }
         } 
-        stage('Building our image') { 
+        stage('Building image') { 
             steps { 
                 script { 
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    app = docker.build(registry) 
                 }
             } 
         }
-        stage('Deploy our image') { 
+        stage('Deploy image') {
             steps { 
                 script { 
                     docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest") 
                     }
                 } 
             }
-        } 
-        stage('Cleaning up') { 
-            steps { 
-                sh "docker rmi $registry:$BUILD_NUMBER" 
-            }
         }
-		stage('Remove old container') { 
-            steps { 
-                sh "docker stop website2" 
-				sh "docker rm website2"
-				}
+        // stage('Remove Unused docker image') {
+        //     steps{
+        //         sh "docker image prune -a -f"
+        //     }
+        // }
+        stage('Delete Old Deployments') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'kubectl get nodes' 
+                }
+            } 
         }
-		stage('Run new container') { 
-            steps { 
-                sh "docker container create --name website2 -p 3000:3000 watri/website:$BUILD_NUMBER"
-				sh "docker start website2"
-				}				
-            }
+    //     stage('Delete Old Deployments') {
+    //         steps {
+    //             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+    //                 sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/nginx-deployment.yaml' 
+    //             }
+    //         } 
+    //     } 
+    //     stage('Deploy to GKE') {
+    //         steps{
+    //             catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+    //                 sh 'kubectl apply -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/nginx-deployment.yaml' 
+    //             }            
+    //         }
+    //     }
+    }
+    post {
+        success {
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : SUCCESS"'
+        }
+        unstable {
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : UNSTABLE"'
+        }
+        failure {
+            sh 'curl -s -X POST https://api.telegram.org/bot1464725701:AAEeIUxEZYGiTUXFXTNckm-DFnxdga9aXYw/sendMessage -d "chat_id=-320006499" -d text="news-demo-starter-files » prod : FAILED"'
         }
     }
+}
