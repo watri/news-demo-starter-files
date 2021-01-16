@@ -18,4 +18,4 @@ spec:
          - name: {{ .Chart.Name }}
            image: "{{ .Values.image.repository }}"
            ports:
-               -containerPort: {{ .Values.containerPort }}
+               -containerPort: 3000
