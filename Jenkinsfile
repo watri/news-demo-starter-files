@@ -69,7 +69,7 @@ pipeline {
         stage('Deploy to GKE using Helm') {
             steps{
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'helm upgrade website-0-1610798990 /website' 
+                    sh 'helm upgrade website-0-1610798990 /var/lib/jenkins/workspace/news-demo-starter-files_prod/website' 
                 }            
             }
         }
