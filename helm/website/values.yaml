@@ -7,8 +7,8 @@ replicaCount: 2
 containerPort: 3000
 
 image:
-  repository: watri/website:latest
-  pullPolicy: IfNotPresent
+  repository: watri/website:81
+  pullPolicy: always
 
 service:
   type: LoadBalancer
