@@ -13,22 +13,6 @@ pipeline {
             steps { 
                 git branch: 'prod', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
             }
-        }
-        stage('Cloning Git Repository branch dev') { 
-            when {
-                branch 'dev'
-            }
-            steps { 
-                git branch: 'dev', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
-            }
-        }
-        stage('Cloning Git Repository branch master') { 
-            when {
-                branch 'master'
-            }
-            steps { 
-                git branch: 'master', credentialsId: 'github_login', url: 'https://github.com/watri/news-demo-starter-files.git' 
-            }
         } 
         stage('Building image') { 
             steps { 
@@ -55,24 +39,24 @@ pipeline {
         stage('Delete Old Deployments') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/website-deployment.yaml' 
+                    sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/website-deployment.yaml --namespace prod' 
                 }
             } 
         } 
         stage('Deploy to GKE') {
             steps{
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'kubectl apply -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/' 
+                    sh 'kubectl apply -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/ --namespace prod' 
                 }            
             }
         }
-        stage('Deploy to GKE using Helm') {
-            steps{
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'helm upgrade website-0-1610798990 /var/lib/jenkins/workspace/news-demo-starter-files_prod/helm/website' 
-                }            
-            }
-        }
+        // stage('Deploy to GKE using Helm') {
+        //     steps{
+        //         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //             sh 'helm upgrade website-0-1610798990 /var/lib/jenkins/workspace/news-demo-starter-files_prod/helm/website' 
+        //         }            
+        //     }
+        // }
     }
     // post {
     //     success {
