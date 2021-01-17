@@ -39,14 +39,14 @@ pipeline {
         stage('Delete Old Deployments') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/website-deployment.yaml --namespace prod' 
+                    sh 'kubectl delete -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/website-deployment.yaml -n prod' 
                 }
             } 
         } 
         stage('Deploy to GKE') {
             steps{
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    sh 'kubectl apply -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/ --namespace prod' 
+                    sh 'kubectl apply -f /var/lib/jenkins/workspace/news-demo-starter-files_prod/K8s/ -n prod' 
                 }            
             }
         }
