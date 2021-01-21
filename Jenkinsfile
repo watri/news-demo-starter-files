@@ -30,7 +30,7 @@ pipeline {
             steps{
                 sh script: '''
                 #!/bin/bash
-                cd $WORKSPACE/news-demo-starter-files
+                cd $WORKSPACE/
                 docker build . -t watri/website:${BUILD_NUMBER}
                 '''
             }
