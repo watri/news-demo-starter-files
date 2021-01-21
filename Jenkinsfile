@@ -48,7 +48,7 @@ pipeline {
             steps{
                 sh script: '''
                 #!/bin/bash
-                cd $WORKSPACE/news-demo-starter-files_prod/
+                cd $WORKSPACE/
                 #get kubectl
                 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
                 chmod +x ./kubectl
