@@ -52,10 +52,10 @@ pipeline {
                 #get kubectl
                 curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
                 chmod +x ./kubectl
-                ./kubectl apply -f ./K8s/website-namespace.yaml -n watri
-                ./kubectl apply -f ./K8s/website-deployment.yaml -n watri
-                cat ./K8s/website-deployment.yaml | sed s/1.0.0/${BUILD_NUMBER}/g | ./kubectl apply -n watri -f -
-                ./kubectl apply -f ./K8s/website-service.yaml -n watri
+                ./kubectl apply -f /K8s/website-namespace.yaml -n watri
+                ./kubectl apply -f /K8s/website-deployment.yaml -n watri
+                cat /K8s/website-deployment.yaml | sed s/1.0.0/${BUILD_NUMBER}/g | ./kubectl apply -n watri -f -
+                ./kubectl apply -f /K8s/website-service.yaml -n watri
                 '''
         }
     }
