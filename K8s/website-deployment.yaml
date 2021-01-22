@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: website
-        image: watri/website:dev
+        image: watri/website:1.0.0
         ports:
         - containerPort: 3000
